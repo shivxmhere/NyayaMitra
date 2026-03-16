@@ -32,9 +32,9 @@ export default function CaseDetail() {
         hearingsApi.getByCase(id),
         bailApi.getByCase(id),
       ]);
-      setCaseData(caseRes.data);
-      setHearingsList(hearingsRes.data);
-      setBailApps(bailRes.data);
+      setCaseData(caseRes.data || DEMO_CASE);
+      setHearingsList(Array.isArray(hearingsRes.data) ? hearingsRes.data : DEMO_HEARINGS);
+      setBailApps(Array.isArray(bailRes.data) ? bailRes.data : [DEMO_BAIL]);
     } catch {
       setCaseData(DEMO_CASE);
       setHearingsList(DEMO_HEARINGS);

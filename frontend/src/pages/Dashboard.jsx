@@ -29,7 +29,8 @@ export default function Dashboard() {
   const fetchCases = async () => {
     try {
       const res = await casesApi.getAll();
-      setCasesList(res.data);
+      const data = Array.isArray(res.data) ? res.data : [DEMO_CASE];
+      setCasesList(data);
     } catch {
       setCasesList([DEMO_CASE]);
     } finally {
@@ -60,7 +61,8 @@ export default function Dashboard() {
     }
   };
 
-  const undertrialCount = casesList.filter(c => c.case_status === 'undertrial').length;
+  const safeList = Array.isArray(casesList) ? casesList : [DEMO_CASE];
+  const undertrialCount = safeList.filter(c => c.case_status === 'undertrial').length;
 
   return (
     <div className="min-h-screen pt-20 pb-10 px-4 max-w-7xl mx-auto">
@@ -80,7 +82,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-6">
         <StatCard
           label={lang === 'hindi' ? 'कुल मामले' : 'Total Cases'}
-          value={casesList.length}
+          value={safeList.length}
           icon={Briefcase}
         />
         <StatCard
@@ -177,7 +179,7 @@ export default function Dashboard() {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {casesList.map((c, i) => (
+          {safeList.map((c, i) => (
             <CaseCard key={c.id} caseData={c} index={i} />
           ))}
         </div>
