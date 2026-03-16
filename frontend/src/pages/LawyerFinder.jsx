@@ -15,19 +15,39 @@ export default function LawyerFinder() {
   useEffect(() => { fetchLawyers(); fetchLegalAidInfo(); }, [filters]);
 
   const fetchLawyers = async () => {
+    setLoading(true);
     try {
       const res = await lawyersApi.find({ district: filters.district, legal_aid_only: filters.legal_aid_only });
-      setLawyersList(Array.isArray(res.data) ? res.data : DEMO_LAWYERS);
-    } catch { setLawyersList(DEMO_LAWYERS); }
-    finally { setLoading(false); }
+      if (res.data && Array.isArray(res.data)) {
+        setLawyersList(res.data);
+      } else {
+        throw new Error("Invalid API response");
+      }
+    } catch {
+      let filtered = DEMO_LAWYERS;
+      if (filters.district) filtered = filtered.filter(l => l.district.toLowerCase() === filters.district.toLowerCase());
+      if (filters.legal_aid_only) filtered = filtered.filter(l => l.is_legal_aid);
+      setLawyersList(filtered);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchLegalAidInfo = async () => {
     try {
       const res = await lawyersApi.getLegalAidInfo(filters.district);
-      setLegalAidInfo(res.data);
+      if (res.data && res.data.phone) {
+        setLegalAidInfo(res.data);
+      } else {
+        throw new Error("Invalid API response");
+      }
     } catch {
-      setLegalAidInfo({ body: "DLSA Prayagraj", phone: "0532-2420660", address: "Civil Court Complex, Prayagraj", eligibility: "Free for anyone who cannot afford a lawyer" });
+      setLegalAidInfo({ 
+        body: "DLSA " + filters.district, 
+        phone: "0532-2420660", 
+        address: "Civil Court Complex, " + filters.district, 
+        eligibility: "Free for anyone who cannot afford a lawyer" 
+      });
     }
   };
 

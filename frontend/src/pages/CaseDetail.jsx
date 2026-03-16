@@ -32,7 +32,7 @@ export default function CaseDetail() {
         hearingsApi.getByCase(id),
         bailApi.getByCase(id),
       ]);
-      setCaseData(caseRes.data || DEMO_CASE);
+      setCaseData(caseRes.data && caseRes.data.prisoner_name ? caseRes.data : DEMO_CASE);
       setHearingsList(Array.isArray(hearingsRes.data) ? hearingsRes.data : DEMO_HEARINGS);
       setBailApps(Array.isArray(bailRes.data) ? bailRes.data : [DEMO_BAIL]);
     } catch {
