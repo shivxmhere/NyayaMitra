@@ -49,13 +49,17 @@ export default function AskNyaya() {
     setLoading(true);
 
     try {
-      const res = await chatApi.send({
-        message: text, language: lang,
-        case_id: selectedCase ? parseInt(selectedCase) : null,
-      });
+      const { generateGeminiContent } = await import('../services/gemini');
+      let prompt = `You are NyayaMitra, an empathetic legal AI assistant for underprivileged undertrial prisoners in India. 
+      Answer this question in ${lang === 'hindi' ? 'Hindi' : 'English'}, simply and accurately.
+      Question: ${text}
+      Add suggested logical follow-up actions wrapped in [ACTIONS]Action 1 | Action 2[/ACTIONS].`;
+      
+      const res = await generateGeminiContent(prompt);
+      
       setMessages(prev => [...prev, {
-        response: res.data.response, isUser: false,
-        suggestedActions: res.data.suggested_actions,
+        response: res.response, isUser: false,
+        suggestedActions: res.suggested_actions,
       }]);
     } catch {
       const demo = DEMO_CHAT.find(c => text.includes(c.message.slice(0, 10)));

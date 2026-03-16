@@ -47,12 +47,37 @@ export default function CaseDetail() {
   const handleGenerateBail = async (data) => {
     setBailLoading(true);
     try {
-      const res = await bailApi.generate(data);
-      setBailApps(prev => [res.data, ...prev]);
+      const { generateGeminiContent } = await import('../services/gemini');
+      let prompt = `Write a formal legal Bail Application for an Indian court. Do not include markdown formatting or asterisks. Return ONLY the text of the application.
+      Applicant Name: ${data.applicant_name}
+      Accused Name: ${caseData.prisoner_name}
+      FIR Number: ${caseData.fir_number}
+      Police Station: ${caseData.police_station}
+      Court: ${caseData.court_name}
+      Charges: ${caseData.charges}
+      Grounds for Bail: ${data.grounds.join(', ')}
+      Advocate: ${data.advocate_name || 'Legal Aid Advocate'}`;
+      
+      const resEn = await generateGeminiContent(prompt);
+      const resHi = await generateGeminiContent(prompt + ' WRITE THE ENTIRE APPLICATION IN HINDI.');
+
+      const generatedBail = {
+        id: Date.now(),
+        case_id: data.case_id,
+        applicant_name: data.applicant_name,
+        advocate_name: data.advocate_name,
+        grounds: data.grounds.join(', '),
+        status: 'draft',
+        generated_text: resHi.response,
+        generated_text_english: resEn.response,
+        generated_at: new Date().toISOString()
+      };
+      
+      setBailApps(prev => [generatedBail, ...prev]);
       toast.success(lang === 'hindi' ? 'जमानत आवेदन तैयार!' : 'Bail application generated!');
     } catch {
       setBailApps([DEMO_BAIL]);
-      toast.success('Demo bail application loaded');
+      toast.success('Demo bail application loaded due to error');
     } finally {
       setBailLoading(false);
     }
