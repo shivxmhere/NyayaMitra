@@ -164,39 +164,23 @@ export default function CaseDetail() {
         </div>
 
         {/* Bail Eligibility */}
-        <div className={`card mb-6 ${caseData.bail_eligibility === 'eligible' ? '!border-accent-green/30' : '!border-accent-red/30'}`}>
-          {caseData.bail_eligibility === 'eligible' ? (
+        <div className={`card mb-6 ${caseData.bail_eligibility === 'eligible' ? '!border-accent-green/30' : '!border-accent-green/30'}`}>
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <span className="text-accent-green text-xl">✅</span>
                 <h3 className="font-devanagari text-lg font-semibold text-accent-green">
-                  {lang === 'hindi' ? 'यह केस जमानत योग्य है' : 'This case is bail-eligible'}
+                  {lang === 'hindi' ? 'जमानत का अधिकार' : 'Right to Bail'}
                 </h3>
               </div>
               <p className="text-sm text-text-secondary mb-4 font-devanagari">
                 {lang === 'hindi'
-                  ? `IPC धाराएं ${caseData.charges} जमानती श्रेणी में आती हैं।`
-                  : `IPC sections ${caseData.charges} fall under bailable category.`}
+                  ? `IPC धाराएं ${caseData.charges} के तहत जमानत के लिए आवेदन कर सकते हैं।`
+                  : `Can apply for bail under IPC sections ${caseData.charges}.`}
               </p>
               <button onClick={() => setShowBailModal(true)} className="btn-saffron font-devanagari">
                 📝 {lang === 'hindi' ? 'जमानत आवेदन तैयार करें' : 'Generate Bail Application'}
               </button>
             </div>
-          ) : (
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <span className="text-accent-red text-xl">⚠️</span>
-                <h3 className="font-devanagari text-lg font-semibold text-accent-red">
-                  {lang === 'hindi' ? 'गैर-जमानती धाराएं' : 'Non-bailable charges detected'}
-                </h3>
-              </div>
-              <p className="text-sm text-text-secondary font-devanagari">
-                {lang === 'hindi'
-                  ? 'वकील से सलाह जरूरी है। DLSA से मुफ्त वकील लें।'
-                  : 'Legal aid lawyer consultation required. Contact DLSA for free lawyer.'}
-              </p>
-            </div>
-          )}
         </div>
 
         {/* Hearing Timeline */}

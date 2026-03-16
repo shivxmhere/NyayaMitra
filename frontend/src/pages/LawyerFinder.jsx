@@ -17,7 +17,7 @@ export default function LawyerFinder() {
   const fetchLawyers = async () => {
     try {
       const res = await lawyersApi.find({ district: filters.district, legal_aid_only: filters.legal_aid_only });
-      setLawyersList(res.data);
+      setLawyersList(Array.isArray(res.data) ? res.data : DEMO_LAWYERS);
     } catch { setLawyersList(DEMO_LAWYERS); }
     finally { setLoading(false); }
   };

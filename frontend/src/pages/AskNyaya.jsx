@@ -35,7 +35,7 @@ export default function AskNyaya() {
   const fetchCases = async () => {
     try {
       const res = await casesApi.getAll();
-      setCasesList(res.data);
+      setCasesList(Array.isArray(res.data) ? res.data : [DEMO_CASE]);
     } catch {
       setCasesList([DEMO_CASE]);
     }
