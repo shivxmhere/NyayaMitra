@@ -88,6 +88,9 @@ async def summarize_case_english(case) -> str:
 
 
 async def check_bail_eligibility(charges: str) -> str:
+    if not charges or not charges.strip():
+        return "unknown"
+        
     NON_BAILABLE = ["302", "376", "395", "396", "307", "376AB", "376DA", "376DB"]
     charges_upper = charges.upper()
     for section in NON_BAILABLE:

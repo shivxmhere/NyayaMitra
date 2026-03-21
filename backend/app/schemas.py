@@ -1,5 +1,5 @@
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, Field, field_validator
+from typing import Optional, List, Literal
 from datetime import date, datetime
 
 
@@ -121,9 +121,28 @@ class BailStatusUpdate(BaseModel):
 
 # ── Chat ─────────────────────────────────────────
 class ChatRequest(BaseModel):
-    message: str
+    message: str = Field(..., min_length=1, max_length=1000)
     language: str = "hindi"
     case_id: Optional[int] = None
+
+    @field_validator("message")
+    @classmethod
+    def validate_message(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError(
+                "Message cannot be empty. / संदेश खाली नहीं हो सकता।"
+            )
+        return v
+
+    @field_validator("language")
+    @classmethod
+    def validate_language(cls, v: str) -> str:
+        allowed = ["english", "hindi", "bhojpuri", "hinglish", "awadhi", "urdu"]
+        if v.lower() not in allowed:
+            raise ValueError(
+                f"Language must be one of: {', '.join(allowed)}. / भाषा इनमें से एक होनी चाहिए: {', '.join(allowed)}।"
+            )
+        return v.lower()
 
 
 class ChatResponse(BaseModel):
